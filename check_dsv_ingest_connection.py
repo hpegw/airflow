@@ -16,6 +16,11 @@ def log_path_from_fs_connection():
 
     logging.info(f"📁 Path from 'dsv_ingest' connection: {path}")
 
+    files = os.listdir(path)
+    logging.info(f"Files in: {path}")
+    for f in files:
+        logging.info(f" - {f}")
+
 # Define the DAG
 with DAG(
     dag_id="log_fs_connection_path",
