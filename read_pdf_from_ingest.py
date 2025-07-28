@@ -3,7 +3,7 @@ from airflow.operators.python import PythonOperator
 from airflow.hooks.base import BaseHook
 from datetime import datetime
 import os
-#import fitz  # PyMuPDF
+import fitz  # PyMuPDF
 import logging
 
 PDF_FILENAME = "Bilanz03_EU_neg_EK_kontennachweise.pdf"  # Replace with your actual PDF filename
