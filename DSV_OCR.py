@@ -85,7 +85,7 @@ def read_pdf_from_connection(base_path):
 # Define DAG
 with DAG(
     dag_id="dsv_ocr_workflow",
-    start_date=datetime(2024, 7, 27),
+    start_date=datetime(2023, 1, 1),
     schedule_interval=None,  # Manual or sensor-based
     catchup=False,
     default_args={"retries": 0, "retry_delay": timedelta(minutes=1)},
