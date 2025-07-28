@@ -31,14 +31,14 @@ def read_pdf_from_connection():
 
     logging.info(f"Path to pdf file: {pdf_path}")
     
-    # Read PDF content using PyMuPDF
-    #with fitz.open(pdf_path) as doc:
-    #    text = ""
-    #    for page in doc:
-    #        text += page.get_text()
+     Read PDF content using PyMuPDF
+    with fitz.open(pdf_path) as doc:
+        text = ""
+        for page in doc:
+            text += page.get_text()
     
-    # Log first 500 characters (to avoid huge logs)
-    #logging.info(f"PDF Content (first 500 chars):\n{text[:500]}")
+     Log first 500 characters (to avoid huge logs)
+    logging.info(f"PDF Content (first 500 chars):\n{text[:500]}")
     logging.info("pdf file read succesfully.")
 
 # Define the DAG
