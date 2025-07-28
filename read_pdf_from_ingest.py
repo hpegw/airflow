@@ -6,20 +6,26 @@ import os
 #import fitz  # PyMuPDF
 import logging
 
-PDF_FILENAME = "/mnt/datasources/vast/glfsshare/DSV/data/ingest/Bilanz03_EU_neg_EK_kontennachweise.pdf"  # Replace with your actual PDF filename
+PDF_FILENAME = "Bilanz03_EU_neg_EK_kontennachweise.pdf"  # Replace with your actual PDF filename
 
 def read_pdf_from_connection():
     # Get the connection
     conn = BaseHook.get_connection("dsv_ingest")
     
-    # Get base path from connection (assumes conn.host holds the file path)
-    base_path = conn.host
-    if not base_path:
-        raise ValueError("Connection 'dsv_ingest' does not have a valid file path in host field.")
-    
-    pdf_path = os.path.join(base_path, PDF_FILENAME)
-    logging.info(f"📄 Reading PDF file from: {pdf_path}")
+    # Extract the path from the connection's 'Extra' field
+    path = conn.extra_dejson.get("path")
 
+    if not path:
+        raise ValueError("No 'path' defined in connection 'dsv_ingest' (check Extra field)")
+
+    logging.info(f"Path from 'dsv_ingest' connection: {path}")
+
+    # Check if the path exists
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Path does not exist: {path}")
+        
+    pdf_path = os.path.join(base_path, PDF_FILENAME)
+    
     if not os.path.isfile(pdf_path):
         raise FileNotFoundError(f"File not found: {pdf_path}")
 
