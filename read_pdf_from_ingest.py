@@ -3,7 +3,7 @@ from airflow.operators.python import PythonOperator
 from airflow.hooks.base import BaseHook
 from datetime import datetime
 import os
-import fitz  # PyMuPDF
+#import fitz  # PyMuPDF
 import logging
 
 PDF_FILENAME = "Bilanz03_EU_neg_EK_kontennachweise.pdf"  # Replace with your actual PDF filename
@@ -24,13 +24,14 @@ def read_pdf_from_connection():
         raise FileNotFoundError(f"File not found: {pdf_path}")
 
     # Read PDF content using PyMuPDF
-    with fitz.open(pdf_path) as doc:
-        text = ""
-        for page in doc:
-            text += page.get_text()
+    #with fitz.open(pdf_path) as doc:
+    #    text = ""
+    #    for page in doc:
+    #        text += page.get_text()
     
     # Log first 500 characters (to avoid huge logs)
-    logging.info(f"✅ PDF Content (first 500 chars):\n{text[:500]}")
+    #logging.info(f"✅ PDF Content (first 500 chars):\n{text[:500]}")
+    logging.info("pdf file read succesfully.")
 
 # Define the DAG
 with DAG(
