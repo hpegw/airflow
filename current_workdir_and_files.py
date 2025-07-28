@@ -22,6 +22,15 @@ def log_mount_points():
     for p in partitions:
         logging.info(f" - Mount point: {p.mountpoint}, Device: {p.device}, FS Type: {p.fstype}")
 
+# Function to log files in /mnt/datasources
+def log_datasources_files():
+    files = os.listdir("/mnt/datasources")
+    logging.info("🔧 Files in /mnt/datasources:")
+    for f in files:
+        logging.info(f" - {f}")
+
+/mnt/datasources
+
 # Define the DAG
 with DAG(
     dag_id="log_directory_files_and_mounts",
@@ -41,4 +50,9 @@ with DAG(
         python_callable=log_mount_points,
     )
 
-    log_files_task >> log_mounts_task
+    log_datasources_files_task = PythonOperator(
+        task_id="log_datasources_files",
+        python_callable=log_datasources_files,
+    )
+
+    log_files_task >> log_mounts_task >> log_datasources_files_task
