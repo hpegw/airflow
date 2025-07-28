@@ -24,7 +24,7 @@ def read_pdf_from_connection():
     if not os.path.exists(path):
         raise FileNotFoundError(f"Path does not exist: {path}")
         
-    pdf_path = os.path.join(base_path, PDF_FILENAME)
+    pdf_path = os.path.join(path, PDF_FILENAME)
     
     if not os.path.isfile(pdf_path):
         raise FileNotFoundError(f"File not found: {pdf_path}")
