@@ -6,7 +6,7 @@ import os
 #import fitz  # PyMuPDF
 import logging
 
-PDF_FILENAME = "Bilanz03_EU_neg_EK_kontennachweise.pdf"  # Replace with your actual PDF filename
+PDF_FILENAME = "/mnt/datasources/vast/glfsshare/DSV/data/ingest/Bilanz03_EU_neg_EK_kontennachweise.pdf"  # Replace with your actual PDF filename
 
 def read_pdf_from_connection():
     # Get the connection
