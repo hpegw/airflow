@@ -29,8 +29,6 @@ def log_datasources_files():
     for f in files:
         logging.info(f" - {f}")
 
-/mnt/datasources
-
 # Define the DAG
 with DAG(
     dag_id="log_directory_files_and_mounts",
