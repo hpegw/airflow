@@ -66,7 +66,7 @@ def read_pdf_from_connection(base_path):
     logging.info(f"Path from '{CONN_ID}' connection: {base_path}")
 
     # Check if the path exists
-    if not os.path.exists(base_path):
+    if not os.path.exists("/mnt/datasources/vast/glfsshare/DSV/data/ingest"):
         raise FileNotFoundError(f"Path does not exist: {base_path}")
         
     pdf_path = os.path.join(base_path, PDF_FILENAME)
