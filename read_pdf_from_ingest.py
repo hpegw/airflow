@@ -34,8 +34,6 @@ def read_pdf_from_connection():
     with open(pdf_path, "rb") as f:
             binary_data = f.read()
     
-    # Log first 500 characters (to avoid huge logs)
-    logging.info(f"PDF Content (first 500 chars):\n{text[:500]}")
     logging.info("pdf file read succesfully.")
 
 # Define the DAG
