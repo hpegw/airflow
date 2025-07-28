@@ -58,6 +58,7 @@ def get_base_path():
     path = conn.extra_dejson.get("path")
     if not path:
         raise ValueError(f"Connection '{CONN_ID}' has no 'path' in extra.")
+    logging.info(f"Path from '{CONN_ID}' connection: {path}")
     return path
 
 def read_pdf_from_connection(base_path):
