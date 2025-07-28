@@ -36,7 +36,7 @@ import os
 
 # Settings
 CONN_ID = "dsv_ingest"
-FILENAME = "Bilanz03_EU_neg_EK_kontennachweise.pdf"
+PDF_FILENAME = "Bilanz03_EU_neg_EK_kontennachweise.pdf"
 # Define the path for jpgs
 JPG_DIR = "data/img/"
 # Define the path for txts
@@ -61,21 +61,14 @@ def get_base_path():
     return path
 
 def read_pdf_from_connection(base_path):
-    # Get the connection
-    conn = BaseHook.get_connection("dsv_ingest")
-    # Extract the path from the connection's 'Extra' field
-    path = conn.extra_dejson.get("path")
-
-    if not path:
-        raise ValueError("No 'path' defined in connection 'dsv_ingest' (check Extra field)")
-
-    logging.info(f"Path from 'dsv_ingest' connection: {path}")
+    
+    logging.info(f"Path from 'dsv_ingest' connection: {base_path}")
 
     # Check if the path exists
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"Path does not exist: {path}")
+    if not os.path.exists(base_path):
+        raise FileNotFoundError(f"Path does not exist: {base_path}")
         
-    pdf_path = os.path.join(path, PDF_FILENAME)
+    pdf_path = os.path.join(base_path, PDF_FILENAME)
     
     if not os.path.isfile(pdf_path):
         raise FileNotFoundError(f"File not found: {pdf_path}")
