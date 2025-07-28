@@ -24,7 +24,7 @@ for package in required_packages:
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.hooks.base import BaseHook
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 from openai import OpenAI
 import base64
