@@ -5,7 +5,7 @@ import importlib.util
 # List of required packages
 required_packages = [
     "pypdfium2",
-    "OpenAI"
+    "openai"
 ]
  
 # Check if each package is installed, install if missing
@@ -66,7 +66,7 @@ def read_pdf_from_connection(base_path):
     logging.info(f"Path from '{CONN_ID}' connection: {base_path}")
 
     # Check if the path exists
-    if not os.path.exists("/mnt/datasources/vast/glfsshare/DSV/data/ingest"):
+    if not os.path.exists(base_path):
         raise FileNotFoundError(f"Path does not exist: {base_path}")
         
     pdf_path = os.path.join(base_path, PDF_FILENAME)
@@ -94,7 +94,7 @@ with DAG(
 
     read_pdf_task = PythonOperator(
         task_id="read_pdf_file",
-        python_callable=read_pdf_from_connection(get_base_path())
+        python_callable=lambda: read_pdf_from_connection(get_base_path())
     )
 
     read_pdf_task
