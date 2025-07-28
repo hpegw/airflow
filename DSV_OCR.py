@@ -100,8 +100,7 @@ with DAG(
 
     read_pdf_task = PythonOperator(
         task_id="read_pdf_file",
-        base_path=get_base_path(),
-        python_callable=read_pdf_from_connection(base_path)
+        python_callable=read_pdf_from_connection(get_base_path())
     )
 
     read_pdf_task
