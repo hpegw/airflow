@@ -62,7 +62,7 @@ def get_base_path():
 
 def read_pdf_from_connection(base_path):
     
-    logging.info(f"Path from 'dsv_ingest' connection: {base_path}")
+    logging.info(f"Path from '{CONN_ID}' connection: {base_path}")
 
     # Check if the path exists
     if not os.path.exists(base_path):
