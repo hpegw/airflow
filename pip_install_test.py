@@ -37,7 +37,7 @@ default_args = {
 def get_google_time():
     try:
         #response = requests.head("https://www.google.com", timeout=5)
-        response = requests.head("https://harbor.ezemral.de", timeout=5)
+        response = requests.head("https://harbor.ezmeral.de", timeout=5)
         date_header = response.headers.get("Date")
         if date_header:
             logging.info(f"Google's server time (from Date header): {date_header}")
