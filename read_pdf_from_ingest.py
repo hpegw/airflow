@@ -29,6 +29,8 @@ def read_pdf_from_connection():
     if not os.path.isfile(pdf_path):
         raise FileNotFoundError(f"File not found: {pdf_path}")
 
+    logging.info(f"Path to pdf file: {pdf_path}")
+    
     # Read PDF content using PyMuPDF
     #with fitz.open(pdf_path) as doc:
     #    text = ""
@@ -36,7 +38,7 @@ def read_pdf_from_connection():
     #        text += page.get_text()
     
     # Log first 500 characters (to avoid huge logs)
-    #logging.info(f"✅ PDF Content (first 500 chars):\n{text[:500]}")
+    #logging.info(f"PDF Content (first 500 chars):\n{text[:500]}")
     logging.info("pdf file read succesfully.")
 
 # Define the DAG
