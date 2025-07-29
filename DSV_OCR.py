@@ -136,7 +136,7 @@ def encode_image(image_path):
 
 def ocr_page_with_nanonets_s(img_base64):
     response = client.chat.completions.create(
-        model=model,
+        model=NANONETSOCR_MODEL,
         messages=[
             {
                 "role": "user",
