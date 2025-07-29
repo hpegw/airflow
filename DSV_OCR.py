@@ -230,7 +230,7 @@ def process_img_to_markdown():
                 all_files_to_process.append((img_fullpath, dir_name, img))
                 
     with Pool(8) as p:
-    results = p.map(apply_processing, all_files_to_process)
+        results = p.map(apply_processing, all_files_to_process)
 
 # Define DAG
 with DAG(
