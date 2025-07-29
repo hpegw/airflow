@@ -217,10 +217,11 @@ def apply_processing(triple_tuple):
     return (dir_name, img, full_md_content[dir_name][page])
 
 def process_img_to_markdown():
+    jpg_path = os.path.join(BASE_PATH, JPG_DIR)
     # here all image files to process are gathered
     all_files_to_process = []
     for dir_name in DIR_NAMES:
-        dir_fullpath = os.path.join(JPG_DIR,dir_name)
+        dir_fullpath = os.path.join(jpg_path,dir_name)
         assert os.path.isdir(dir_fullpath)
         
         imgs = os.listdir(dir_fullpath)
