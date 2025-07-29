@@ -333,6 +333,111 @@ def combine_realated_pages():
             os.chmod(mergedout_path, 0o777) 
         combine_pages(table_full_path,mergedout_path)
 
+def mergetables_to_json_with_llama(file_path):
+    with open(file_path, 'r') as table:
+        file_content = table.read()
+
+    client = LLAMA_CLIENT
+
+    # here the json_template LLM should fill is defined
+    json_template = """{
+      "metadata": {
+          "dokumentname": "",
+          "berichtstichtag": "",
+          "währung": "",
+          "skalierung": ["EUR","TEUR","MEUR"]
+      },
+      "bilanzpositionen": { 
+          {
+              "positionsname": "",
+              "wert": float,
+              "wert_vorjahr": float,
+              "berichtsteil": ["aktiva", "passiva","guv"],
+              "seitenzahl": int
+          }
+      }
+      "kontonachweise": {
+          { 
+              "hauptkategorie": "",
+              "unterkategorie": "",
+              "abschnittsname": "",
+              "kontoname": "",
+              "kontonummer": string,
+              "betrag": float,
+              "betrag_vorjahr": float,
+              "berichtsteil": ["aktiva", "passiva","guv"],
+              "seitenzahl": int
+          }
+      }
+    }"""
+    
+    completion = client.chat.completions.create(
+        model=LLAMA_MODEL,
+        messages= [
+                    {
+                        "role": "user",
+                        "content": f"Ich habe ein Markdown File mit ein oder mehreren Tabellen darin. ich bin mir nicht sicher ob sie zu einer großen tabelle zusammengehören. was meinst du? {file_content}"
+                    },
+                    {
+                        "role": "user",
+                        "content": f"""Kannst du die Tabellen Einträge in ein oder mehrere JSONs überführen, je nachdem ob es sich um eine oder mehrere Tabellen handelt? 
+                        Beachte dafür bitte folgende json Struktur Regeln: 
+                        1. Verwende beim Befüllen für metadata.skalierung ausschließlich eine der folgenden Optionen 'EUR', 'TEUR' oder 'MEUR'. Dabei steht 'TEUR' für 'Tausend Euro', 'MEUR' steht für 'Tausend Euro' und 'EUR' bedeutet einfach nur 'Euro' ohne Skalierung. Diese Begriffe könnten in verschiedenen Schreibweisen wie zum Beispiel 'TEURO', 'teuro' oder 'Meur' im Text oder der Tabelle vorkommen.
+                        2. Verwende für die Bennennung der Währung die ISO-Währungscodes also zum Beispiel 'EUR' statt 'euro' oder 'USD' statt 'US-Dollar'. Lasse hierbei die Skalierung weg. Also statt 'TEUR' nutze nur 'EUR'. 
+                        3. Nutze für den Berichtsteil ausschließlich eine der folgenden Optionen: 'aktiva', 'passiva' oder 'GuV'. Entscheide hierbei nach den Wörtern die du in der Tabelle oder im Text findest.
+                        
+                        Das ist die JSON Struktur an die du dich halten musst: 
+                        {json_template} 
+                        """
+                    }
+        ],
+        response_format= { "type": "json_object" }
+    )
+
+    return completion.choices[0].message.content
+
+def apply_json_processing(triple_tuple):
+    json_path = os.path.join(BASE_PATH, JSON_DIR)
+    merged_table_fullpath = triple_tuple[0]
+    dir_name = triple_tuple[1]
+    
+    merged_txt = triple_tuple[2]
+    pages = merged_txt.replace(".txt","")
+
+    print(f"Processing {merged_table_fullpath}...")
+    output = mergetables_to_json_with_llama(merged_table_fullpath)
+    print(output)
+       # create folder if it does not exist and set permisssions
+    output_path = Path(os.path.join(json_path,dir_name))
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+        os.chmod(output_path, 0o777)
+
+    #create file and write markdown content to it
+    
+    #---------------------!!! TO DO !!!------------------------
+    #currently we write here the full llm response for each file, but it should be to filter for the json only.. this needs to be implemented
+    with open(f"{output_path}/{pages}.txt", "w") as file:
+        file.write(output)
+
+def convert_merged_tables_to_json():
+    mergedtables_path = os.path.join(BASE_PATH, MERGEDTABLES_DIR)
+    # here all merged txt files to process are gathered
+    all_merged_txt_to_process = []
+    for dir_name in DIR_NAMES:
+        dir_fullpath = os.path.join(mergedtables_path,dir_name)
+        assert os.path.isdir(dir_fullpath)
+        
+        merged_txts = os.listdir(dir_fullpath)
+        for merged_txt in merged_txts:
+            if os.path.isdir(os.path.join(dir_fullpath, merged_txt)):
+                print(f"{merged_txt} is a dir, skip it")
+            else:
+                merged_table_fullpath = os.path.join(dir_fullpath,merged_txt)
+                all_merged_txt_to_process.append((merged_table_fullpath, dir_name, merged_txt))
+    with Pool(8) as p:
+        results = p.map(apply_json_processing, all_merged_txt_to_process)
+
 # Define DAG
 with DAG(
     dag_id="dsv_ocr_workflow",
@@ -363,6 +468,12 @@ with DAG(
         python_callable=combine_realated_pages
     )
 
+    convert_merged_tabled_to_json = PythonOperator(
+        task_id="convert_merged_tabled_to_json",
+        python_callable=convert_merged_tables_to_json
+    )
+
 
     
-    environment_preparation >> split_pdf_to_jpg >> convert_jpg_to_markdown >> combine_pages_with_related_tables
+    
+    environment_preparation >> split_pdf_to_jpg >> convert_jpg_to_markdown >> combine_pages_with_related_tables >> convert_merged_tabled_to_json
