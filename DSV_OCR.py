@@ -246,8 +246,7 @@ def apply_processing(triple_tuple):
         else:
             md_con_only_pages_with_relevant_tables[dir_name][page] = md_output
             with open(f"{tableout_path}/{page}.txt", "w") as file:
-                file.write(full_md_content[dir_name][page])
-            
+                file.write(full_md_content[dir_name][page])   
     else:
         print("no table here at ", page)
         md_con_only_pages_wo_tables[dir_name][page] = md_output
