@@ -62,7 +62,16 @@ JSON_DIR = "data/json"
 NANONETSOCR_API_TOKEN = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NTMxODkxOTEsImlzcyI6ImFpb2xpQGhwZS5jb20iLCJzdWIiOiJlNWM1ZGRiZC1kMWYxLTRiYmQtODg3YS1iZTg0ZGIyZDUwZWEiLCJ1c2VyIjoiYWRtaW4ifQ.wvyvk26k8Vwndm21jHXELOCwDji8J-73BJFzjm07Ktp6jv4-Sj22xj7GmshQ6f24svRfBonq6YMpa_PilgB55B_STe-hD-Be-c9u-JwxQ0Bp6QUt-bpG86usVtF_HwTUIvgVhEYrx-RSn0Y9_yUN_v9cTIiZKuxXsvRWlqYRs7UA_HUoztQVngkHqwcmA7kKizE0El_K1W9fS8rzVc3WaumMLXZcG5oM2I0zuG4AiiEe3IpvKdVAULiqbxy8v8x6274RJkxWiyXlWWAXiCbs11wRx2etkMPX4ndtaI7DJenDJea9xK3ifPLHgvJeObGO2PcFpAaPaNOJWFwdHhDe1Q"
 NANONETSOCR_BASE_URL = "https://nanonets-ocr-s-predictor-dominic-viola-3c5c07d6.ingress.pcai0203.fr2.hpecolo.net/v1"
 NANONETSOCR_MODEL = "nanonets/Nanonets-OCR-s"
-client = OpenAI(api_key=NANONETSOCR_API_TOKEN, base_url=NANONETSOCR_BASE_URL)
+NANONETSOCR_CLIENT = OpenAI(api_key=NANONETSOCR_API_TOKEN, base_url=NANONETSOCR_BASE_URL)
+
+LLAMA_API_TOKEN = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NTI1ODQ5NDgsImlzcyI6ImFpb2xpQGhwZS5jb20iLCJzdWIiOiI1ODUyZDhmZS1hMzg4LTQ1NGUtOTVhNS1mYWE1NzRiMGU2MTkiLCJ1c2VyIjoiYWRtaW4ifQ.MPMEYc42tEZIU2OJxV-P6NIuF45EDLTa-G6b-O69YMae39bnpDHn1Uw5onVvHyp_VpGC3TF79ZImhUxKkRtSVNQplePdhdUonl12ttFDAOD_-pGBhxg6vibcE9h_oDLLvRKaUHgL9WsqFmcmxsjDqsO6Ssze3EiOAzN8aLYmslWLlwJgBcv-fTBPWcR4EJdpYePAjIvG3jEu6W7qv4ZWxlKhoTkfPW0jb8ogxObRz7pioXYu0fstAoPoGIx4_KOi0IsnhT7TU0fjpSIr7mpLUGR_sO6fW1rGS4dZoRDtpawc3NDxndvgNh2GL2r-jQo7WJZiLJX8cGpYWb7SGLtV-Q"
+LLAMA_BASE_URL = "https://llama-3-1-8b-instruct-predictor-isabelle-steinh-7e6f8d66.ingress.pcai0203.fr2.hpecolo.net/v1"
+LLAMA_MODEL = "meta-llama/Llama-3.1-8B-Instruct"
+LLAMA_CLIENT = OpenAI(api_key=API_TOKEN, base_url=BASE_URL)
+
+
+model = "meta-llama/Llama-3.1-8B-Instruct"
+
 
 TAG_RE = re.compile(r'<[^>]+>')
 
@@ -164,6 +173,7 @@ def encode_image(image_path):
         return base64.b64encode(image_file.read()).decode("utf-8")
 
 def ocr_page_with_nanonets_s(img_base64):
+    client = NANONETSOCR_CLIENT
     response = client.chat.completions.create(
         model=NANONETSOCR_MODEL,
         messages=[
@@ -265,6 +275,70 @@ def process_img_to_markdown():
     with Pool(8) as p:
         results = p.map(apply_processing, all_files_to_process)
 
+def combine_pages(pages_folder, merged_folder):
+    # Get a sorted list of file names in the folder
+    file_names = sorted([file for file in os.listdir(pages_folder) if file.endswith('.txt')])
+    # Initialize a list to store the entries for each table
+    tables = []
+    prev_number = None
+    # Iterate over the files and combine their contents if they belong to the same table
+    current_table = []
+    for file_name in file_names:
+        page = file_name.strip("page")
+        page_number = int(page.strip(".txt"))
+        # if it's the first page of the table append it
+        if not current_table:
+            # if it's the following page append the page to the current list
+            if prev_number is not None and int(page_number) == (prev_number + 1):
+                current_table.append(int(page_number))
+            # if it's not the following page append the list to tables and create new list
+            else:
+                if current_table:
+                    tables.append(current_table)
+                current_table = []
+            current_table.append(int(page_number))
+        else:
+            # if it's the following page append the page to the current list
+            if int(page_number) == (prev_number + 1):
+                current_table.append(int(page_number))
+            # if it's not the following page append the list to tables and create new list
+            else:
+                tables.append(current_table)
+                current_table = []
+                current_table.append(int(page_number))
+        prev_number = page_number
+        print("current list is empty" if len(current_table) == 1 else "current list is not empty")
+
+    # Append the last table to the tables list
+    if current_table:
+        tables.append(current_table)
+
+    # write files for each merged table
+    for i, sublist in enumerate(tables):
+        merged_table = str(merged_folder) + "/" + "_".join(map(str, sublist)) + ".txt"
+        with open(merged_table, "w") as f:
+            for item in sublist:
+                with open(f"{pages_folder}/page{item:03d}.txt", "r") as page_file:
+                    f.write(page_file.read())
+
+def combine_realated_pages():
+    table_path = os.path.join(BASE_PATH, TABLE_DIR)
+    mergedtables_path = os.path.join(BASE_PATH, MERGEDTABLES_DIR)
+    #run through all tablesonly 
+    for dir in DIR_NAMES:
+        key = dir
+        table_full_path = Path(os.path.join(table_path,key))
+        mergedout_path = Path(os.path.join(mergedtables_path,key))
+    
+        if not os.path.exists(table_full_path):
+            os.makedirs(table_full_path)
+            os.chmod(table_full_path, 0o777)
+    
+        if not os.path.exists(mergedout_path):
+            os.makedirs(mergedout_path)
+            os.chmod(mergedout_path, 0o777) 
+        combine_pages(table_full_path,mergedout_path)
+
 # Define DAG
 with DAG(
     dag_id="dsv_ocr_workflow",
@@ -289,5 +363,12 @@ with DAG(
         task_id="convert_jpg_to_markdown",
         python_callable=process_img_to_markdown
     )
+
+    combine_pages_with_related_tables = PythonOperator(
+        task_id="convert_jpg_to_markdown",
+        python_callable=combine_realated_pages
+    )
+
+
     
-    environment_preparation >> split_pdf_to_jpg >> convert_jpg_to_markdown
+    environment_preparation >> split_pdf_to_jpg >> convert_jpg_to_markdown >> combine_pages_with_related_tables
