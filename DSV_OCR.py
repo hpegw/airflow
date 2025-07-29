@@ -36,6 +36,8 @@ import os
 import re
 
 # Settings
+DIR_NAMES = ["Bilanz03_EU_neg_EK_kontennachweise"]
+
 CONN_ID = "dsv_ingest"
 PDF_FILENAME = "Bilanz03_EU_neg_EK_kontennachweise.pdf"
 BASE_PATH="/mnt/datasources/vast/glfsshare/DSV/"
