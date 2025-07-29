@@ -386,7 +386,7 @@ def mergetables_to_json_with_llama(file_path):
                         2. Verwende für die Bennennung der Währung die ISO-Währungscodes also zum Beispiel 'EUR' statt 'euro' oder 'USD' statt 'US-Dollar'. Lasse hierbei die Skalierung weg. Also statt 'TEUR' nutze nur 'EUR'. 
                         3. Nutze für den Berichtsteil ausschließlich eine der folgenden Optionen: 'aktiva', 'passiva' oder 'GuV'. Entscheide hierbei nach den Wörtern die du in der Tabelle oder im Text findest.
                         
-                        Das ist die JSON Struktur an die du dich halten musst: 
+                        Das ist die JSON Struktur an die du dich halten musst und die Ausgabe soll nur JSON enthalten:
                         {json_template} 
                         """
                     }
