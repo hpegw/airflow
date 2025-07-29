@@ -59,7 +59,7 @@ JSON_DIR = "data/json"
 def get_base_path():
     conn = BaseHook.get_connection(CONN_ID)
     path = conn.extra_dejson.get("path")
-    if not path="/mnt/datasources/vast/glfsshare/DSV/data/ingest/"
+    if not path
         raise ValueError(f"Connection '{CONN_ID}' has no 'path' in extra.")
     logging.info(f"Path from '{CONN_ID}' connection: {path}")
     return path
