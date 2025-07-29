@@ -86,6 +86,34 @@ def read_pdf_from_connection():
     
     logging.info("pdf file read succesfully.")
 
+def convert_pdf_into_jpg_by_page():
+    pdf_path = os.path.join(BASE_PATH, PDF_DIR)
+    jpg_path = os.path.join(BASE_PATH, JPG_DIR)
+    # Loop over .pdf files in the directory
+    for filename in os.listdir(pdf_path):
+        if filename.lower().endswith(".pdf"):
+            full_path = os.path.join(pdf_path, filename)
+            inputdoc = os.path.splitext(os.path.basename(full_path))[0]
+    
+            # Load a document
+            pdf = pdfium.PdfDocument(full_path)
+    
+            #Create output folder if not existing yet
+            out_path=jpg_path + "/" + inputdoc
+            if not os.path.exists(out_path):
+                os.makedirs(out_path)
+            # set permissions to folder
+            os.chmod(out_path, 0o777)
+        
+            # Loop over pages and render
+            for i in range(len(pdf)):
+                page = pdf[i]
+                image = page.render().to_pil()
+                image.save(f"{out_path}/page{i:03d}.jpg")
+                # set permissions to file
+                os.chmod(f"{out_path}/page{i:03d}.jpg", 0o666)
+
+
 # Define DAG
 with DAG(
     dag_id="dsv_ocr_workflow",
@@ -101,4 +129,9 @@ with DAG(
         python_callable=read_pdf_from_connection
     )
 
-    read_pdf_task
+    split_pdf_to_jpg = PythonOperator(
+        task_id="split_pdf_to_jpg",
+        python_callable=convert_pdf_into_jpg_by_page
+    )
+
+    split_pdf_to_jpg
