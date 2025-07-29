@@ -37,6 +37,9 @@ import os
 # Settings
 CONN_ID = "dsv_ingest"
 PDF_FILENAME = "Bilanz03_EU_neg_EK_kontennachweise.pdf"
+BASE_PATH="/mnt/datasources/vast/glfsshare/DSV/"
+# Define the path for ingest data
+INGEST_DIR = "data/ingest/"
 # Define the path for jpgs
 JPG_DIR = "data/img/"
 # Define the path for txts
@@ -56,20 +59,20 @@ JSON_DIR = "data/json"
 def get_base_path():
     conn = BaseHook.get_connection(CONN_ID)
     path = conn.extra_dejson.get("path")
-    if not path:
+    if not path="/mnt/datasources/vast/glfsshare/DSV/data/ingest/"
         raise ValueError(f"Connection '{CONN_ID}' has no 'path' in extra.")
     logging.info(f"Path from '{CONN_ID}' connection: {path}")
     return path
 
-def read_pdf_from_connection(base_path):
-    
-    logging.info(f"Path from '{CONN_ID}' connection: {base_path}")
+def read_pdf_from_connection():
+    path = os.path.join(BASE_PATH, INGEST_DIR)
+    #logging.info(f"Path from '{CONN_ID}' connection: {path}")
 
     # Check if the path exists
-    if not os.path.exists(base_path):
-        raise FileNotFoundError(f"Path does not exist: {base_path}")
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Path does not exist: {path}")
         
-    pdf_path = os.path.join(base_path, PDF_FILENAME)
+    pdf_path = os.path.join(path, PDF_FILENAME)
     
     if not os.path.isfile(pdf_path):
         raise FileNotFoundError(f"File not found: {pdf_path}")
@@ -94,7 +97,7 @@ with DAG(
 
     read_pdf_task = PythonOperator(
         task_id="read_pdf_file",
-        python_callable=lambda: read_pdf_from_connection(get_base_path())
+        python_callable=read_pdf_from_connection
     )
 
     read_pdf_task
