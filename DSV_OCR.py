@@ -62,7 +62,7 @@ JSON_DIR = "data/json"
 NANONETSOCR_API_TOKEN = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NTMxODkxOTEsImlzcyI6ImFpb2xpQGhwZS5jb20iLCJzdWIiOiJlNWM1ZGRiZC1kMWYxLTRiYmQtODg3YS1iZTg0ZGIyZDUwZWEiLCJ1c2VyIjoiYWRtaW4ifQ.wvyvk26k8Vwndm21jHXELOCwDji8J-73BJFzjm07Ktp6jv4-Sj22xj7GmshQ6f24svRfBonq6YMpa_PilgB55B_STe-hD-Be-c9u-JwxQ0Bp6QUt-bpG86usVtF_HwTUIvgVhEYrx-RSn0Y9_yUN_v9cTIiZKuxXsvRWlqYRs7UA_HUoztQVngkHqwcmA7kKizE0El_K1W9fS8rzVc3WaumMLXZcG5oM2I0zuG4AiiEe3IpvKdVAULiqbxy8v8x6274RJkxWiyXlWWAXiCbs11wRx2etkMPX4ndtaI7DJenDJea9xK3ifPLHgvJeObGO2PcFpAaPaNOJWFwdHhDe1Q"
 NANONETSOCR_BASE_URL = "https://nanonets-ocr-s-predictor-dominic-viola-3c5c07d6.ingress.pcai0203.fr2.hpecolo.net/v1"
 NANONETSOCR_MODEL = "nanonets/Nanonets-OCR-s"
-client = OpenAI(api_key=API_TOKEN, base_url=BASE_URL)
+client = OpenAI(api_key=NANONETSOCR_API_TOKEN, base_url=NANONETSOCR_BASE_URL)
 
 TAG_RE = re.compile(r'<[^>]+>')
 
