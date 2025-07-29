@@ -80,6 +80,35 @@ def get_base_path():
     logging.info(f"Path from '{CONN_ID}' connection: {path}")
     return path
 
+def prep_environment():
+    #create folder if it does not exist and set permisssions
+    ingest_path = os.path.join(BASE_PATH, INGEST_DIR)
+    jpg_path = os.path.join(BASE_PATH, JPG_DIR)
+    txt_path = os.path.join(BASE_PATH, TXT_DIR)
+    table_path = os.path.join(BASE_PATH, TABLE_DIR)
+    notables_path = os.path.join(BASE_PATH, NOTABLES_DIR)
+    mergedtables_path = os.path.join(BASE_PATH, MERGEDTABLES_DIR)
+    pdf_path = os.path.join(BASE_PATH, PDF_DIR)
+    json_path = os.path.join(BASE_PATH, JSON_DIR)
+    
+    all_paths = [
+        ingest_path,
+        jpg_path,
+        txt_path,
+        table_path,
+        notables_path,
+        mergedtables_path,
+        pdf_path,
+        json_path
+    ]
+    for path in all_paths:
+        logging.info(f"checking Path: {path}.")
+        if not os.path.exists(path):
+            os.makedirs(path)
+            os.chmod(path, 0o777)
+            logging.info(f"Path: {path} created.")
+
+
 def read_pdf_from_connection():
     path = os.path.join(BASE_PATH, INGEST_DIR)
     #logging.info(f"Path from '{CONN_ID}' connection: {path}")
@@ -246,11 +275,11 @@ with DAG(
     description="Run the OCR workflow."
 ) as dag:
 
-    read_pdf_task = PythonOperator(
-        task_id="read_pdf_file",
-        python_callable=read_pdf_from_connection
+    environment_preparation = PythonOperator(
+        task_id="environment_preparation",
+        python_callable=prep_environment
     )
-
+   
     split_pdf_to_jpg = PythonOperator(
         task_id="split_pdf_to_jpg",
         python_callable=convert_pdf_into_jpg_by_page
@@ -261,4 +290,4 @@ with DAG(
         python_callable=process_img_to_markdown
     )
     
-    split_pdf_to_jpg >> convert_jpg_to_markdown
+    environment_preparation >> split_pdf_to_jpg >> convert_jpg_to_markdown
