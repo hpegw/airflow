@@ -67,7 +67,7 @@ NANONETSOCR_CLIENT = OpenAI(api_key=NANONETSOCR_API_TOKEN, base_url=NANONETSOCR_
 LLAMA_API_TOKEN = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NTI1ODQ5NDgsImlzcyI6ImFpb2xpQGhwZS5jb20iLCJzdWIiOiI1ODUyZDhmZS1hMzg4LTQ1NGUtOTVhNS1mYWE1NzRiMGU2MTkiLCJ1c2VyIjoiYWRtaW4ifQ.MPMEYc42tEZIU2OJxV-P6NIuF45EDLTa-G6b-O69YMae39bnpDHn1Uw5onVvHyp_VpGC3TF79ZImhUxKkRtSVNQplePdhdUonl12ttFDAOD_-pGBhxg6vibcE9h_oDLLvRKaUHgL9WsqFmcmxsjDqsO6Ssze3EiOAzN8aLYmslWLlwJgBcv-fTBPWcR4EJdpYePAjIvG3jEu6W7qv4ZWxlKhoTkfPW0jb8ogxObRz7pioXYu0fstAoPoGIx4_KOi0IsnhT7TU0fjpSIr7mpLUGR_sO6fW1rGS4dZoRDtpawc3NDxndvgNh2GL2r-jQo7WJZiLJX8cGpYWb7SGLtV-Q"
 LLAMA_BASE_URL = "https://llama-3-1-8b-instruct-predictor-isabelle-steinh-7e6f8d66.ingress.pcai0203.fr2.hpecolo.net/v1"
 LLAMA_MODEL = "meta-llama/Llama-3.1-8B-Instruct"
-LLAMA_CLIENT = OpenAI(api_key=API_TOKEN, base_url=BASE_URL)
+LLAMA_CLIENT = OpenAI(api_key=LLAMA_API_TOKEN, base_url=LLAMA_BASE_URL)
 
 
 model = "meta-llama/Llama-3.1-8B-Instruct"
