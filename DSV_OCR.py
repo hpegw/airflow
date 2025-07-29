@@ -67,6 +67,7 @@ def get_base_path():
 def read_pdf_from_connection():
     path = os.path.join(BASE_PATH, INGEST_DIR)
     #logging.info(f"Path from '{CONN_ID}' connection: {path}")
+    logging.info(f"Path to file: {path}")
 
     # Check if the path exists
     if not os.path.exists(path):
