@@ -69,10 +69,6 @@ LLAMA_BASE_URL = "https://llama-3-1-8b-instruct-predictor-isabelle-steinh-7e6f8d
 LLAMA_MODEL = "meta-llama/Llama-3.1-8B-Instruct"
 LLAMA_CLIENT = OpenAI(api_key=LLAMA_API_TOKEN, base_url=LLAMA_BASE_URL)
 
-
-model = "meta-llama/Llama-3.1-8B-Instruct"
-
-
 TAG_RE = re.compile(r'<[^>]+>')
 
 # Create dictionary with tables and wo tables
@@ -116,7 +112,6 @@ def prep_environment():
             os.makedirs(path)
             os.chmod(path, 0o777)
             logging.info(f"Path: {path} created.")
-
 
 def read_pdf_from_connection():
     path = os.path.join(BASE_PATH, INGEST_DIR)
@@ -364,7 +359,7 @@ with DAG(
     )
 
     combine_pages_with_related_tables = PythonOperator(
-        task_id="convert_jpg_to_markdown",
+        task_id="combine_pages_with_related_tables",
         python_callable=combine_realated_pages
     )
 
