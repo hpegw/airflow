@@ -1,3 +1,25 @@
+import sys
+import subprocess
+import importlib.util
+
+# List of required packages
+required_packages = [
+    "PyMuPDF"
+]
+ 
+# Check if each package is installed, install if missing
+for package in required_packages:
+    # Check if the package is already installed
+    if importlib.util.find_spec(package) is None:
+        print(f"{package} not found, attempting to install...")
+        try:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+            print(f"Successfully installed {package}")
+        except subprocess.CalledProcessError as e:
+            print(f"Failed to install {package}: {e}")
+            print("Please install the required packages manually and retry.")
+            sys.exit(1)
+
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.hooks.base import BaseHook
@@ -41,8 +63,9 @@ def read_pdf_from_connection():
         for page in doc:
             text += page.get_text()
     
-    
-    logging.info("pdf file read succesfully.")
+    # Log first 500 characters (to avoid huge logs)
+    logging.info(f"✅ PDF Content (first 500 chars):\n{text[:500]}")
+    #logging.info("pdf file read succesfully.")
 
 # Define the DAG
 with DAG(
