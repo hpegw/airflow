@@ -4,6 +4,7 @@ from airflow.hooks.base import BaseHook
 from datetime import datetime
 import os
 import logging
+import fitz  # PyMuPDF
 
 PDF_FILENAME = "Bilanz03_EU_neg_EK_kontennachweise.pdf"  # Replace with your actual PDF filename
 
@@ -31,8 +32,15 @@ def read_pdf_from_connection():
     logging.info(f"Path to pdf file: {pdf_path}")
     
     # Read PDF file
-    with open(pdf_path, "rb") as f:
-            binary_data = f.read()
+    #with open(pdf_path, "rb") as f:
+    #        binary_data = f.read()
+
+     # Read PDF content using PyMuPDF
+    with fitz.open(pdf_path) as doc:
+        text = ""
+        for page in doc:
+            text += page.get_text()
+    
     
     logging.info("pdf file read succesfully.")
 
