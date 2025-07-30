@@ -461,7 +461,7 @@ def convert_merged_tables_to_json(**context):
     with Pool(8) as p:
         results = p.map(apply_json_processing, all_merged_txt_to_process)
 
-def clean_environment():
+def clean_environment(**context):
     DIR_NAMES = []
     DIR_NAMES.append(os.path.splitext(context["dag_run"].conf.get("filename"))[0])
     logging.info(f"Environment celanup for: {DIR_NAMES}")
