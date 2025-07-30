@@ -146,6 +146,7 @@ def read_pdf_from_connection():
 def convert_pdf_into_jpg_by_page():
     pdf_path = os.path.join(BASE_PATH, PDF_DIR)
     jpg_path = os.path.join(BASE_PATH, JPG_DIR)
+    logging.info(f"Conversion running with filename: {DIR_NAMES}")
     
     
     # Loop over .pdf files in the directory
