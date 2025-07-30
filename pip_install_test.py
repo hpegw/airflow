@@ -53,6 +53,7 @@ with DAG(
     schedule_interval=None,
     catchup=False,
     description="Logs pip list and fetches time from Google",
+    access_control={'All': {'can_read', 'can_edit', 'can_delete'}}
 ) as dag:
 
     log_pip_list = BashOperator(
