@@ -119,6 +119,7 @@ def prep_environment(**context):
     DIR_NAMES.clear()
     DIR_NAMES.append(filename)
     logging.info(f"DAG running with filename: {filename}")
+    logging.info(f"DAG running with filename: {DIR_NAMES}")
 
 def read_pdf_from_connection():
     path = os.path.join(BASE_PATH, INGEST_DIR)
