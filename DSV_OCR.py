@@ -147,10 +147,12 @@ def read_pdf_from_connection():
     
     logging.info("pdf file read succesfully.")
 
-def convert_pdf_into_jpg_by_page():
+def convert_pdf_into_jpg_by_page(**context):
     pdf_path = os.path.join(BASE_PATH, PDF_DIR)
     jpg_path = os.path.join(BASE_PATH, JPG_DIR)
-    DIR_NAMES = Variable.get("DIR_NAMES")
+    
+    DIR_NAMES = []
+    DIR_NAME.append(context["dag_run"].conf.get("filename"))
     logging.info(f"Conversion running with filename: {DIR_NAMES}")
     
     
