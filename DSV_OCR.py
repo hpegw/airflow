@@ -119,8 +119,8 @@ def prep_environment(**context):
     files = []
     files.append(filename)
     Variable.set("DIR_NAMES", files)
-    dn = Variable.get("DIR_NAMES", deserialize_json=True)
-    logging.info(f"DAG running with filenames: {dn}")
+    #dn = Variable.get("DIR_NAMES", deserialize_json=True)
+    logging.info(f"DAG running with filenames: {DIR_NAMES}")
 
 
 def read_pdf_from_connection():
@@ -148,7 +148,7 @@ def read_pdf_from_connection():
 def convert_pdf_into_jpg_by_page():
     pdf_path = os.path.join(BASE_PATH, PDF_DIR)
     jpg_path = os.path.join(BASE_PATH, JPG_DIR)
-    Variable.get("DIR_NAMES", deserialize_json=True)
+    DIR_NAMES = Variable.get("DIR_NAMES", deserialize_json=True)
     logging.info(f"Conversion running with filename: {DIR_NAMES}")
     
     
