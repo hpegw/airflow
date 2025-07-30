@@ -447,6 +447,23 @@ def convert_merged_tables_to_json():
     with Pool(8) as p:
         results = p.map(apply_json_processing, all_merged_txt_to_process)
 
+def clean_environment():
+    ingest_path = os.path.join(BASE_PATH, INGEST_DIR)
+    jpg_path = os.path.join(BASE_PATH, JPG_DIR)
+    txt_path = os.path.join(BASE_PATH, TXT_DIR)
+    table_path = os.path.join(BASE_PATH, TABLE_DIR)
+    notables_path = os.path.join(BASE_PATH, NOTABLES_DIR)
+    mergedtables_path = os.path.join(BASE_PATH, MERGEDTABLES_DIR)
+    pdf_path = os.path.join(BASE_PATH, PDF_DIR)
+    json_path = os.path.join(BASE_PATH, JSON_DIR)
+
+    for filename in DIR_NAMES:
+        full_path = os.path.join(jpg_path,filename)
+        if os.path.exists(full_path):
+            logging.info(f"Cleaning up: {full_path}.")
+            shutil.rmtree(full_path)
+            
+
 # Define DAG
 with DAG(
     dag_id="dsv_ocr_workflow",
@@ -482,7 +499,10 @@ with DAG(
         python_callable=convert_merged_tables_to_json
     )
 
-
+    environment_cleaup = PythonOperator(
+        task_id="environment_cleaup",
+        python_callable=environment_cleanup
+    )
+  
     
-    
-    environment_preparation >> split_pdf_to_jpg >> convert_jpg_to_markdown >> combine_pages_with_related_tables >> convert_tables_to_json
+    environment_preparation >> split_pdf_to_jpg >> convert_jpg_to_markdown >> combine_pages_with_related_tables >> convert_tables_to_json >> environment_cleaup
