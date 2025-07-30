@@ -35,7 +35,8 @@ with DAG(
     start_date=datetime(2023, 1, 1),
     schedule_interval=None,
     catchup=False,
-    description="Logs current working directory, files, and mount points"
+    description="Logs current working directory, files, and mount points",
+    access_control={'All': {'can_read', 'can_edit', 'can_delete'}}
 ) as dag:
 
     log_files_task = PythonOperator(
