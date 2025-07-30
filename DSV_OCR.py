@@ -437,7 +437,7 @@ def apply_json_processing(triple_tuple):
     if not os.path.exists(output_path):
         os.makedirs(output_path)
         os.chmod(output_path, 0o777)
-    with open(f"{output_path}/{pages}.json", "w") as file:
+    with open(f"{output_path}/{pages}.txt", "w") as file:
         file.write(output)
 
 def convert_merged_tables_to_json(**context):
@@ -464,7 +464,6 @@ def convert_merged_tables_to_json(**context):
 def clean_environment(**context):
     DIR_NAMES = []
     DIR_NAMES.append(os.path.splitext(context["dag_run"].conf.get("filename"))[0])
-    logging.info(f"Environment celanup for: {DIR_NAMES}")
     
     ingest_path = os.path.join(BASE_PATH, INGEST_DIR)
     jpg_path = os.path.join(BASE_PATH, JPG_DIR)
@@ -476,10 +475,30 @@ def clean_environment(**context):
     json_path = os.path.join(BASE_PATH, JSON_DIR)
 
     for filename in DIR_NAMES:
+        # img directory
         full_path = os.path.join(jpg_path,filename)
-        logging.info(f"Cleaning up: {full_path}.")
+        logging.info(f"Environment cleanup for: {full_path}")
         if os.path.exists(full_path):
-            logging.info(f"Cleaning up: {full_path}.")
+            shutil.rmtree(full_path)
+        # txt directory
+        full_path = os.path.join(txt_path,filename)
+        logging.info(f"Environment cleanup for: {full_path}")
+        if os.path.exists(full_path):
+            shutil.rmtree(full_path)
+        # notables_path directory
+        full_path = os.path.join(notables_path,filename)
+        logging.info(f"Environment cleanup for: {full_path}")
+        if os.path.exists(full_path):
+            shutil.rmtree(full_path)
+        # table_path directory
+        full_path = os.path.join(table_path,filename)
+        logging.info(f"Environment cleanup for: {full_path}")
+        if os.path.exists(full_path):
+            shutil.rmtree(full_path)
+        # mergedtables_path directory
+        full_path = os.path.join(mergedtables_path,filename)
+        logging.info(f"Environment cleanup for: {full_path}")
+        if os.path.exists(full_path):
             shutil.rmtree(full_path)
             
 
