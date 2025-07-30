@@ -271,7 +271,7 @@ def apply_processing(triple_tuple):
 
 def process_img_to_markdown(**context):
     DIR_NAMES = []
-    DIR_NAMES.append((context["dag_run"].conf.get("filename")).stem)
+    DIR_NAMES.append(os.path.splitext(context["dag_run"].conf.get("filename"))[0])
     logging.info(f"Conversion running with filename: {DIR_NAMES}")
     jpg_path = os.path.join(BASE_PATH, JPG_DIR)
     # here all image files to process are gathered
