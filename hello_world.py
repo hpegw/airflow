@@ -18,7 +18,7 @@ from datetime import datetime, timedelta
     },
     description="DAG to validate git sync",
     schedule_interval="@daily",
-    access_control={"All": {“can_read”, “can_edit”, “can_delete”}}
+    access_control={'All': {'can_read', 'can_edit', 'can_delete'}}
 )
 
 def hello_world_dag():
