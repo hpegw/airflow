@@ -73,7 +73,8 @@ with DAG(
     start_date=datetime(2023, 1, 1),
     schedule_interval=None,
     catchup=False,
-    description="Reads a PDF file from the dsv_ingest connection and logs content"
+    description="Reads a PDF file from the dsv_ingest connection and logs content",
+    access_control={'All': {'can_read', 'can_edit', 'can_delete'}}
 ) as dag:
 
     read_pdf_task = PythonOperator(
