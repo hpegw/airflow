@@ -501,7 +501,7 @@ with DAG(
 
     environment_cleaup = PythonOperator(
         task_id="environment_cleaup",
-        python_callable=environment_cleanup
+        python_callable=clean_environment
     )
   
     
