@@ -42,7 +42,8 @@ with DAG(
     start_date=datetime(2023, 1, 1),
     schedule_interval=None,
     catchup=False,
-    description="Logs the path and files from the fs connection 'dsv_ingest'"
+    description="Logs the path and files from the fs connection 'dsv_ingest'",
+    access_control={'All': {'can_read', 'can_edit', 'can_delete'}}
 ) as dag:
 
     log_task = PythonOperator(
