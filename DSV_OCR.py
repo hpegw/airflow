@@ -156,7 +156,6 @@ def convert_pdf_into_jpg_by_page(**context):
     DIR_NAMES.append(context["dag_run"].conf.get("filename"))
     logging.info(f"Conversion running with filename: {DIR_NAMES}")
     
-    
     # Loop over .pdf files in the directory
     #for filename in os.listdir(pdf_path):
     for filename in DIR_NAMES:
@@ -270,7 +269,10 @@ def apply_processing(triple_tuple):
     
     return (dir_name, img, full_md_content[dir_name][page])
 
-def process_img_to_markdown():
+def process_img_to_markdown(**context):
+    DIR_NAMES = []
+    DIR_NAMES.append(context["dag_run"].conf.get("filename"))
+    logging.info(f"Conversion running with filename: {DIR_NAMES}")
     jpg_path = os.path.join(BASE_PATH, JPG_DIR)
     # here all image files to process are gathered
     all_files_to_process = []
@@ -335,7 +337,10 @@ def combine_pages(pages_folder, merged_folder):
                 with open(f"{pages_folder}/page{item:03d}.txt", "r") as page_file:
                     f.write(page_file.read())
 
-def combine_realated_pages():
+def combine_realated_pages(**context):
+    DIR_NAMES = []
+    DIR_NAMES.append(context["dag_run"].conf.get("filename"))
+    logging.info(f"Conversion running with filename: {DIR_NAMES}")
     table_path = os.path.join(BASE_PATH, TABLE_DIR)
     mergedtables_path = os.path.join(BASE_PATH, MERGEDTABLES_DIR)
     #run through all tablesonly 
@@ -435,7 +440,10 @@ def apply_json_processing(triple_tuple):
     with open(f"{output_path}/{pages}.json", "w") as file:
         file.write(output)
 
-def convert_merged_tables_to_json():
+def convert_merged_tables_to_json(**context):
+    DIR_NAMES = []
+    DIR_NAMES.append(context["dag_run"].conf.get("filename"))
+    logging.info(f"Conversion running with filename: {DIR_NAMES}")
     mergedtables_path = os.path.join(BASE_PATH, MERGEDTABLES_DIR)
     # here all merged txt files to process are gathered
     all_merged_txt_to_process = []
