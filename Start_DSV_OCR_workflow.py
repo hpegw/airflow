@@ -19,9 +19,9 @@ with DAG(
     description="DAG that triggers DSV OCR workflow and passes a filename",
 ) as dag:
 
-    trigger_"dsv_ocr_workflow" = TriggerDagRunOperator(
-        task_id="trigger_"dsv_ocr_workflow"",
-        trigger_dag_id=""dsv_ocr_workflow"",  # Must match actual child DAG
+    trigger_dsv_ocr_workflow = TriggerDagRunOperator(
+        task_id="trigger_dsv_ocr_workflow",
+        trigger_dag_id="dsv_ocr_workflow",  # Must match actual child DAG
         conf={"filename": FILENAME},    # Pass the filename here
         wait_for_completion=False,
     )
