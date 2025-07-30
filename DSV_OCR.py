@@ -24,6 +24,7 @@ for package in required_packages:
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.hooks.base import BaseHook
+from airflow.models import Variable
 from datetime import datetime, timedelta
 import logging
 from openai import OpenAI
@@ -36,7 +37,7 @@ import os
 import re
 
 # Settings
-DIR_NAMES = []
+airflow variables set DIR_NAMES '[]'
 
 CONN_ID = "dsv_ingest"
 PDF_FILENAME = "Bilanz03_EU_neg_EK_kontennachweise.pdf"
@@ -115,9 +116,12 @@ def prep_environment(**context):
 
     # extract filename from DAG conf
     filename = context["dag_run"].conf.get("filename")
-    DIR_NAMES.clear()
-    DIR_NAMES.append(filename)
-    logging.info(f"DAG running with filenames: {DIR_NAMES}")
+    files = []
+    files.append(filename)
+    airflow variables set DIR_NAMES files
+    dn = Variable.get("DIR_NAMES", deserialize_json=True)
+    logging.info(f"DAG running with filenames: {dn}")
+
 
 def read_pdf_from_connection():
     path = os.path.join(BASE_PATH, INGEST_DIR)
@@ -144,6 +148,7 @@ def read_pdf_from_connection():
 def convert_pdf_into_jpg_by_page():
     pdf_path = os.path.join(BASE_PATH, PDF_DIR)
     jpg_path = os.path.join(BASE_PATH, JPG_DIR)
+    Variable.get("DIR_NAMES", deserialize_json=True)
     logging.info(f"Conversion running with filename: {DIR_NAMES}")
     
     
@@ -422,12 +427,7 @@ def apply_json_processing(triple_tuple):
     if not os.path.exists(output_path):
         os.makedirs(output_path)
         os.chmod(output_path, 0o777)
-
-    #create file and write markdown content to it
-    
-    #---------------------!!! TO DO !!!------------------------
-    #currently we write here the full llm response for each file, but it should be to filter for the json only.. this needs to be implemented
-    with open(f"{output_path}/{pages}.txt", "w") as file:
+    with open(f"{output_path}/{pages}.json", "w") as file:
         file.write(output)
 
 def convert_merged_tables_to_json():
