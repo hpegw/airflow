@@ -39,7 +39,8 @@ with DAG(
         "retries": 0,
         "retry_delay": timedelta(minutes=1),
     },
-    description="Triggers when any *.pdf file appears in the dsv_ingest path"
+    description="Triggers when any *.pdf file appears in the dsv_ingest path",
+    access_control={'All': {'can_read', 'can_edit', 'can_delete'}}
 ) as dag:
 
     wait_for_any_pdf = PythonSensor(
