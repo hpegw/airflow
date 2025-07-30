@@ -460,6 +460,7 @@ def clean_environment():
 
     for filename in DIR_NAMES:
         full_path = os.path.join(jpg_path,filename)
+        logging.info(f"Cleaning up: {full_path}.")
         if os.path.exists(full_path):
             logging.info(f"Cleaning up: {full_path}.")
             shutil.rmtree(full_path)
