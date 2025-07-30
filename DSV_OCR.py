@@ -85,7 +85,7 @@ def get_base_path():
     logging.info(f"Path from '{CONN_ID}' connection: {path}")
     return path
 
-def prep_environment():
+def prep_environment(**context):
     #create folder if it does not exist and set permisssions
     ingest_path = os.path.join(BASE_PATH, INGEST_DIR)
     jpg_path = os.path.join(BASE_PATH, JPG_DIR)
@@ -112,6 +112,10 @@ def prep_environment():
             os.makedirs(path)
             os.chmod(path, 0o777)
             logging.info(f"Path: {path} created.")
+
+    # extract filename from DAG conf
+    filename = context["dag_run"].conf.get("filename")
+    print(f"DAG running with filename: {filename}")
 
 def read_pdf_from_connection():
     path = os.path.join(BASE_PATH, INGEST_DIR)
