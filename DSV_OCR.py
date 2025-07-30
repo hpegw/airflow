@@ -496,10 +496,10 @@ def clean_environment(**context):
         if os.path.exists(full_path):
             shutil.rmtree(full_path)
         # mergedtables_path directory
-        full_path = os.path.join(mergedtables_path,filename)
-        logging.info(f"Environment cleanup for: {full_path}")
-        if os.path.exists(full_path):
-            shutil.rmtree(full_path)
+        #full_path = os.path.join(mergedtables_path,filename)
+        #logging.info(f"Environment cleanup for: {full_path}")
+        #if os.path.exists(full_path):
+        #    shutil.rmtree(full_path)
             
 
 # Define DAG
