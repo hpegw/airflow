@@ -339,7 +339,7 @@ def combine_pages(pages_folder, merged_folder):
 
 def combine_realated_pages(**context):
     DIR_NAMES = []
-    DIR_NAMES.append(context["dag_run"].conf.get("filename"))
+    DIR_NAMES.append(os.path.splitext(context["dag_run"].conf.get("filename"))[0])
     logging.info(f"Conversion running with filename: {DIR_NAMES}")
     table_path = os.path.join(BASE_PATH, TABLE_DIR)
     mergedtables_path = os.path.join(BASE_PATH, MERGEDTABLES_DIR)
@@ -442,7 +442,7 @@ def apply_json_processing(triple_tuple):
 
 def convert_merged_tables_to_json(**context):
     DIR_NAMES = []
-    DIR_NAMES.append(context["dag_run"].conf.get("filename"))
+    DIR_NAMES.append(os.path.splitext(context["dag_run"].conf.get("filename"))[0])
     logging.info(f"Conversion running with filename: {DIR_NAMES}")
     mergedtables_path = os.path.join(BASE_PATH, MERGEDTABLES_DIR)
     # here all merged txt files to process are gathered
