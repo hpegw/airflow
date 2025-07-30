@@ -21,6 +21,7 @@ with DAG(
     schedule_interval=None,
     catchup=False,
     description="DAG that triggers DSV OCR workflow for each PDF file",
+    access_control={'All': {'can_read', 'can_edit', 'can_delete'}},
 ) as dag:
 
     @task
