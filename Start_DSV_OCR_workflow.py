@@ -30,13 +30,13 @@ with DAG(
             if f.lower().endswith(".pdf") and os.path.isfile(os.path.join(PDF_DIR, f))
         ]
 
-    # Use dynamic task mapping to trigger a DAG run for each PDF file
+    @task
+    def prepare_trigger_configs(filenames):
+        return [{"filename": f} for f in filenames]
+
     trigger_dsv_ocr_workflow = TriggerDagRunOperator.partial(
         task_id="trigger_dsv_ocr_workflow",
         trigger_dag_id=CHILD_DAG_ID,
         wait_for_completion=False,
-    ).expand(
-        conf=[{"filename": filename} for filename in list_pdf_files.output]
-    )
+    ).expand(conf=prepare_trigger_configs(list_pdf_files()))
 
-    list_pdf_files() >> trigger_dsv_ocr_workflow
