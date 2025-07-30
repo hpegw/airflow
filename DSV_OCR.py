@@ -36,7 +36,7 @@ import os
 import re
 
 # Settings
-DIR_NAMES = ["Bilanz03_EU_neg_EK_kontennachweise"]
+DIR_NAMES = []
 
 CONN_ID = "dsv_ingest"
 PDF_FILENAME = "Bilanz03_EU_neg_EK_kontennachweise.pdf"
@@ -115,6 +115,7 @@ def prep_environment(**context):
 
     # extract filename from DAG conf
     filename = context["dag_run"].conf.get("filename")
+    global DIR_NAMES
     DIR_NAMES.clear()
     DIR_NAMES.append(filename)
     logging.info(f"DAG running with filename: {filename}")
