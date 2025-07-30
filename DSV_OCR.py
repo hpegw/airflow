@@ -37,7 +37,7 @@ import os
 import re
 
 # Settings
-airflow variables set DIR_NAMES '[]'
+Variable.set("DIR_NAMES", [])
 
 CONN_ID = "dsv_ingest"
 PDF_FILENAME = "Bilanz03_EU_neg_EK_kontennachweise.pdf"
@@ -118,7 +118,7 @@ def prep_environment(**context):
     filename = context["dag_run"].conf.get("filename")
     files = []
     files.append(filename)
-    Variable.set("DIR_NAMES", FILES)
+    Variable.set("DIR_NAMES", files)
     dn = Variable.get("DIR_NAMES", deserialize_json=True)
     logging.info(f"DAG running with filenames: {dn}")
 
