@@ -121,8 +121,7 @@ def prep_environment(**context):
     logging.info(f"List of files: {files}")
     Variable.set("DIR_NAMES", files)
     logging.info(Variable.get("DIR_NAMES"))
-    dn = []
-    #dn = Variable.get("DIR_NAMES", deserialize_json=True)
+    dn = Variable.get("DIR_NAMES")
     logging.info(f"DAG running with filenames: {dn}")
 
 
@@ -151,7 +150,7 @@ def read_pdf_from_connection():
 def convert_pdf_into_jpg_by_page():
     pdf_path = os.path.join(BASE_PATH, PDF_DIR)
     jpg_path = os.path.join(BASE_PATH, JPG_DIR)
-    DIR_NAMES = Variable.get("DIR_NAMES", deserialize_json=True)
+    DIR_NAMES = Variable.get("DIR_NAMES")
     logging.info(f"Conversion running with filename: {DIR_NAMES}")
     
     
