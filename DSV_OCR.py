@@ -469,8 +469,8 @@ with DAG(
     )
 
     convert_tables_to_json = PythonOperator(
-        task_id="convert_merged_tabled_to_json",
-        python_callable=convert_tables_to_json
+        task_id="convert_tables_to_json",
+        python_callable=convert_merged_tables_to_json
     )
 
 
