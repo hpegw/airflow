@@ -119,8 +119,8 @@ def prep_environment(**context):
     files = []
     files.append(filename)
     Variable.set("DIR_NAMES", files)
-    #dn = Variable.get("DIR_NAMES", deserialize_json=True)
-    logging.info(f"DAG running with filenames: {DIR_NAMES}")
+    dn = Variable.get("DIR_NAMES", deserialize_json=True)
+    logging.info(f"DAG running with filenames: {dn}")
 
 
 def read_pdf_from_connection():
