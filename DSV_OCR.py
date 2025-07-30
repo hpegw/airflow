@@ -152,7 +152,7 @@ def convert_pdf_into_jpg_by_page(**context):
     jpg_path = os.path.join(BASE_PATH, JPG_DIR)
     
     DIR_NAMES = []
-    DIR_NAME.append(context["dag_run"].conf.get("filename"))
+    DIR_NAMES.append(context["dag_run"].conf.get("filename"))
     logging.info(f"Conversion running with filename: {DIR_NAMES}")
     
     
