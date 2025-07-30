@@ -486,7 +486,8 @@ with DAG(
     schedule_interval=None,  # Manual or sensor-based
     catchup=False,
     default_args={"retries": 0, "retry_delay": timedelta(minutes=1)},
-    description="Run the OCR workflow."
+    description="Run the OCR workflow.",
+    access_control={'All': {'can_read', 'can_edit', 'can_delete'}}
 ) as dag:
 
     environment_preparation = PythonOperator(
