@@ -120,7 +120,7 @@ def prep_environment(**context):
     files.append(filename)
     logging.info(f"List of files: {files}")
     Variable.set("DIR_NAMES", files)
-    logging.info(Variable.get("DIR_NAMES", deserialize_json=FALSE))
+    logging.info(Variable.get("DIR_NAMES"))
     dn = []
     #dn = Variable.get("DIR_NAMES", deserialize_json=True)
     logging.info(f"DAG running with filenames: {dn}")
