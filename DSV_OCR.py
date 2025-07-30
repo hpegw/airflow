@@ -462,6 +462,10 @@ def convert_merged_tables_to_json(**context):
         results = p.map(apply_json_processing, all_merged_txt_to_process)
 
 def clean_environment():
+    DIR_NAMES = []
+    DIR_NAMES.append(os.path.splitext(context["dag_run"].conf.get("filename"))[0])
+    logging.info(f"Environment celanup for: {DIR_NAMES}")
+    
     ingest_path = os.path.join(BASE_PATH, INGEST_DIR)
     jpg_path = os.path.join(BASE_PATH, JPG_DIR)
     txt_path = os.path.join(BASE_PATH, TXT_DIR)
@@ -515,8 +519,8 @@ with DAG(
         python_callable=convert_merged_tables_to_json
     )
 
-    environment_cleaup = PythonOperator(
-        task_id="environment_cleaup",
+    environment_cleanup = PythonOperator(
+        task_id="environment_cleanup",
         python_callable=clean_environment
     )
   
