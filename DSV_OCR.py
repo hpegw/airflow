@@ -145,8 +145,11 @@ def convert_pdf_into_jpg_by_page():
     pdf_path = os.path.join(BASE_PATH, PDF_DIR)
     jpg_path = os.path.join(BASE_PATH, JPG_DIR)
     
+    
     # Loop over .pdf files in the directory
-    for filename in os.listdir(pdf_path):
+    #for filename in os.listdir(pdf_path):
+    for filename in DIR_NAMES:
+        logging.info(f"Converting pdf zo jpg for file: {filename}")
         if filename.lower().endswith(".pdf"):
             full_path = os.path.join(pdf_path, filename)
             inputdoc = os.path.splitext(os.path.basename(full_path))[0]
