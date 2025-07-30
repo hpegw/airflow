@@ -525,4 +525,4 @@ with DAG(
     )
   
     
-    environment_preparation >> split_pdf_to_jpg >> convert_jpg_to_markdown >> combine_pages_with_related_tables >> convert_tables_to_json >> environment_cleaup
+    environment_preparation >> split_pdf_to_jpg >> convert_jpg_to_markdown >> combine_pages_with_related_tables >> convert_tables_to_json >> environment_cleanup
