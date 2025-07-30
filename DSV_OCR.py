@@ -37,7 +37,8 @@ import os
 import re
 
 # Settings
-Variable.set("DIR_NAMES", [])
+#Variable.set("DIR_NAMES", [])
+DIR_NAMES = [] 
 
 CONN_ID = "dsv_ingest"
 PDF_FILENAME = "Bilanz03_EU_neg_EK_kontennachweise.pdf"
