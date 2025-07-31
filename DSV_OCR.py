@@ -34,6 +34,7 @@ import shutil
 from multiprocessing import Pool
 import pypdfium2 as pdfium
 import os
+import json
 import re
 
 # Settings
