@@ -477,7 +477,7 @@ def remove_bullets(text):
 def json_postprocessing(**context):
     DIR_NAMES = []
     DIR_NAMES.append(os.path.splitext(context["dag_run"].conf.get("filename"))[0])
-    logging.info(f"JSON postprocessing filename: {DIR_NAMES}")
+    logging.info(f"JSON post processing for filename: {DIR_NAMES}")
     clean_json_path = os.path.join(BASE_PATH, CLEAN_JSON_DIR)
     json_path = os.path.join(BASE_PATH, JSON_DIR)
     
@@ -520,18 +520,18 @@ def json_postprocessing(**context):
                             #print(bilanz[i]["positionsname"])
                             cleaned_bilanz.append(bilanz[i])
 
-            # assemble cleaned json
-            cleaned_json = {"metadata":metadata,"bilanzpositionen":cleaned_bilanz,"kontonachweise":cleaned_kontos}
-
-            # create directory if necessary
-            if not os.path.exists(clean_json_fullpath):
-                os.makedirs(clean_json_fullpath)
-                os.chmod(clean_json_fullpath, 0o777)
-           
-            # write cleaned json in file
-            json_name = filename.strip("txt")
-            with open(f"{clean_json_fullpath}/{json_name}json", 'w') as f:
-                f.write(json.dumps(cleaned_json))
+                # assemble cleaned json
+                cleaned_json = {"metadata":metadata,"bilanzpositionen":cleaned_bilanz,"kontonachweise":cleaned_kontos}
+    
+                # create directory if necessary
+                if not os.path.exists(clean_json_fullpath):
+                    os.makedirs(clean_json_fullpath)
+                    os.chmod(clean_json_fullpath, 0o777)
+               
+                # write cleaned json in file
+                json_name = filename.strip("txt")
+                with open(f"{clean_json_fullpath}/{json_name}json", 'w') as f:
+                    f.write(json.dumps(cleaned_json))
     
     return(json.dumps(cleaned_json))
 
