@@ -293,7 +293,7 @@ def process_img_to_markdown(**context):
                 img_fullpath = os.path.join(dir_fullpath,img)
                 all_files_to_process.append((img_fullpath, dir_name, img))
                 
-    with Pool(8) as p:
+    with Pool(2) as p:
         results = p.map(apply_processing, all_files_to_process)
 
 def combine_pages(pages_folder, merged_folder):
@@ -463,7 +463,7 @@ def convert_merged_tables_to_json(**context):
             else:
                 merged_table_fullpath = os.path.join(dir_fullpath,merged_txt)
                 all_merged_txt_to_process.append((merged_table_fullpath, dir_name, merged_txt))
-    with Pool(8) as p:
+    with Pool(2) as p:
         results = p.map(apply_json_processing, all_merged_txt_to_process)
 
 def remove_bullets(text):
