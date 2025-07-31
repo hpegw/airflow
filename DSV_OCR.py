@@ -59,6 +59,8 @@ MERGEDTABLES_DIR = "data/txt/tablesonly/merged_tables/"
 PDF_DIR = "data/pdfs"
 # Define the .json directories base path
 JSON_DIR = "data/json"
+# Define the cleaned json directory
+CLEAN_JSON_DIR = "data/cleaned_json"
 
 # nanonetsOCR
 NANONETSOCR_API_TOKEN = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NTMxODkxOTEsImlzcyI6ImFpb2xpQGhwZS5jb20iLCJzdWIiOiJlNWM1ZGRiZC1kMWYxLTRiYmQtODg3YS1iZTg0ZGIyZDUwZWEiLCJ1c2VyIjoiYWRtaW4ifQ.wvyvk26k8Vwndm21jHXELOCwDji8J-73BJFzjm07Ktp6jv4-Sj22xj7GmshQ6f24svRfBonq6YMpa_PilgB55B_STe-hD-Be-c9u-JwxQ0Bp6QUt-bpG86usVtF_HwTUIvgVhEYrx-RSn0Y9_yUN_v9cTIiZKuxXsvRWlqYRs7UA_HUoztQVngkHqwcmA7kKizE0El_K1W9fS8rzVc3WaumMLXZcG5oM2I0zuG4AiiEe3IpvKdVAULiqbxy8v8x6274RJkxWiyXlWWAXiCbs11wRx2etkMPX4ndtaI7DJenDJea9xK3ifPLHgvJeObGO2PcFpAaPaNOJWFwdHhDe1Q"
@@ -97,6 +99,7 @@ def prep_environment(**context):
     mergedtables_path = os.path.join(BASE_PATH, MERGEDTABLES_DIR)
     pdf_path = os.path.join(BASE_PATH, PDF_DIR)
     json_path = os.path.join(BASE_PATH, JSON_DIR)
+    clean_json_path = os.path.join(BASE_PATH, CLEAN_JSON_DIR)
     
     all_paths = [
         ingest_path,
@@ -106,7 +109,8 @@ def prep_environment(**context):
         notables_path,
         mergedtables_path,
         pdf_path,
-        json_path
+        json_path,
+        clean_json_path
     ]
     for path in all_paths:
         logging.info(f"checking Path: {path}.")
@@ -461,6 +465,76 @@ def convert_merged_tables_to_json(**context):
     with Pool(8) as p:
         results = p.map(apply_json_processing, all_merged_txt_to_process)
 
+def remove_bullets(text):
+    # Define a regex pattern to remove stuff like a) 1. A. and II.
+    pattern = re.compile("[I,V,X,L,D,C,M]{4}\. |[I,V,X,L,D,C,M]{3}\. |[I,V,X,L,D,C,M]{2}\. ")
+    pattern2 = re.compile("[0-9]{2}\. |[0-9]\. |[a-z]\) |[A-Z]\. ")
+    test = pattern.sub('', text)
+    return pattern2.sub('', test)
+
+
+
+def json_postprocessing(**context):
+    DIR_NAMES = []
+    DIR_NAMES.append(os.path.splitext(context["dag_run"].conf.get("filename"))[0])
+    logging.info(f"JSON postprocessing filename: {DIR_NAMES}")
+    clean_json_path = os.path.join(BASE_PATH, CLEAN_JSON_DIR)
+    json_path = os.path.join(BASE_PATH, JSON_DIR)
+    
+    for dir_name in DIR_NAMES:
+        json_fullpath = os.path.join(json_path,dir_name)
+        clean_json_fullpath = os.path.join(clean_json_path,dir_name)
+        for filename in os.listdir(json_fullpath):
+            if filename.lower().endswith(".txt"):
+                cleaned_kontos = []
+                # read in file
+                with open(f"{json_fullpath}/{filename}") as f:
+                    d = json.load(f)
+    
+                    metadata = d.get("metadata")
+                    bilanz = d.get("bilanzpositionen")
+                    kontos = d.get("kontonachweise") 
+                # clean the kontos
+                n = len(kontos)
+                for i in range(n):
+                    if "Übertrag" not in kontos[i]["kontoname"]:
+                        if not kontos[i]["kontoname"]=="":
+                            kontos[i]["kontoname"]=remove_bullets(kontos[i]["kontoname"])
+                            kontos[i]["kontonummer"]=str(kontos[i]["kontonummer"])
+                            kontos[i]["hauptkategorie"]=remove_bullets(kontos[i]["hauptkategorie"])
+                            kontos[i]["unterkategorie"]=remove_bullets(kontos[i]["unterkategorie"])
+                            kontos[i]["abschnittsname"]=remove_bullets(kontos[i]["abschnittsname"])
+                            #print(kontos[i]["kontoname"])
+                            cleaned_kontos.append(kontos[i])
+    
+                # insert dokumentname
+                metadata["dokumentname"]=str(dir_name)
+    
+                # clean the bilanz
+                cleaned_bilanz = []
+                n = len(bilanz)
+                for i in range(n):
+                    if "Übertrag" not in bilanz[i]["positionsname"]:
+                        if not bilanz[i]["positionsname"]=="":
+                            bilanz[i]["positionsname"]=remove_bullets(bilanz[i]["positionsname"])
+                            #print(bilanz[i]["positionsname"])
+                            cleaned_bilanz.append(bilanz[i])
+
+            # assemble cleaned json
+            cleaned_json = {"metadata":metadata,"bilanzpositionen":cleaned_bilanz,"kontonachweise":cleaned_kontos}
+
+            # create directory if necessary
+            if not os.path.exists(clean_json_fullpath):
+                os.makedirs(clean_json_fullpath)
+                os.chmod(clean_json_fullpath, 0o777)
+           
+            # write cleaned json in file
+            json_name = filename.strip("txt")
+            with open(f"{clean_json_fullpath}/{json_name}json", 'w') as f:
+                f.write(json.dumps(cleaned_json))
+    
+    return(json.dumps(cleaned_json))
+
 def clean_environment(**context):
     DIR_NAMES = []
     DIR_NAMES.append(os.path.splitext(context["dag_run"].conf.get("filename"))[0])
@@ -538,10 +612,16 @@ with DAG(
         python_callable=convert_merged_tables_to_json
     )
 
+    json_post_processing = PythonOperator(
+        task_id="json_post_processing",
+        python_callable=json_postprocessing,
+        provide_context=True  # Needed for **kwargs (for accessing XCom etc.)
+    )
+
     environment_cleanup = PythonOperator(
         task_id="environment_cleanup",
         python_callable=clean_environment
     )
   
     
-    environment_preparation >> split_pdf_to_jpg >> convert_jpg_to_markdown >> combine_pages_with_related_tables >> convert_tables_to_json >> environment_cleanup
+    environment_preparation >> split_pdf_to_jpg >> convert_jpg_to_markdown >> combine_pages_with_related_tables >> convert_tables_to_json >> json_post_processing >> environment_cleanup
